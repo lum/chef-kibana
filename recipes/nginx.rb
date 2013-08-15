@@ -35,7 +35,7 @@ else
 end
 
 template "/etc/nginx/sites-available/kibana" do
-  source node['kibana']['nginx']['template']git
+  source node['kibana']['nginx']['template']
   cookbook node['kibana']['nginx']['template_cookbook']
   notifies :reload, "service[nginx]"
   variables(
