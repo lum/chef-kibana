@@ -25,17 +25,17 @@ include_recipe "nginx"
 if Chef::Config[:solo]
   es_server_ip = node['kibana']['es_server']
 else
-  es_results = search(:node, "tags:#{node['kibana']['es_role']}")
+  es_results = search(:node, "tags:#{node['kibana']['es_tag']}")
 
   unless es_results.empty?
-    es_server_ip = es_results[0]['ipaddress']
+    es_server_ip = node['kibana']['es_server']
   else
     es_server_ip = node['kibana']['es_server']
   end
 end
 
 template "/etc/nginx/sites-available/kibana" do
-  source node['kibana']['nginx']['template']
+  source node['kibana']['nginx']['template']git
   cookbook node['kibana']['nginx']['template_cookbook']
   notifies :reload, "service[nginx]"
   variables(
