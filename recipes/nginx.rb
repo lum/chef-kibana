@@ -22,12 +22,24 @@ node.set['nginx']['default_site_enabled'] = node['kibana']['nginx']['enable_defa
 
 include_recipe "nginx"
 
+if Chef::Config[:solo]
+  es_server_ip = node['kibana']['es_server']
+else
+  es_results = search(:node, node['kibana']['es_role'])
+
+  unless es_results.empty?
+    es_server_ip = es_results[0]['ipaddress']
+  else
+    es_server_ip = node['kibana']['es_server']
+  end
+end
+
 template "/etc/nginx/sites-available/kibana" do
   source node['kibana']['nginx']['template']
   cookbook node['kibana']['nginx']['template_cookbook']
   notifies :reload, "service[nginx]"
   variables(
-    :es_server => node['kibana']['es_server'],
+    :es_server_ip => es_server_ip,
     :es_port   => node['kibana']['es_port'],
     :server_name => node['kibana']['webserver_hostname'],
     :server_aliases => node['kibana']['webserver_aliases'],
