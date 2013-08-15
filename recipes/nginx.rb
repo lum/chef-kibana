@@ -25,7 +25,7 @@ include_recipe "nginx"
 if Chef::Config[:solo]
   es_server_ip = node['kibana']['es_server']
 else
-  es_results = search(:node, tags:node['kibana']['es_role'])
+  es_results = search(:node, tags:#{node['kibana']['es_role']})
 
   unless es_results.empty?
     es_server_ip = es_results[0]['ipaddress']
