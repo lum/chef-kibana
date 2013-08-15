@@ -28,7 +28,7 @@ else
   es_results = search(:node, "tags:#{node['kibana']['es_tag']}")
 
   unless es_results.empty?
-    es_server_ip = node['kibana']['es_server']
+    es_server_ip = es_results[0]['ipaddress']
   else
     es_server_ip = node['kibana']['es_server']
   end
@@ -39,7 +39,7 @@ template "/etc/nginx/sites-available/kibana" do
   cookbook node['kibana']['nginx']['template_cookbook']
   notifies :reload, "service[nginx]"
   variables(
-    :es_server_ip => es_server_ip,
+    :es_server => es_server_ip,
     :es_port   => node['kibana']['es_port'],
     :server_name => node['kibana']['webserver_hostname'],
     :server_aliases => node['kibana']['webserver_aliases'],
